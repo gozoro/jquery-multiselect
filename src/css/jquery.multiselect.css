@@ -1,4 +1,8 @@
-
+/**
+ * A jQuery plugin multiselect with checkboxes
+ * @author Gozoro <gozoro@yandex.ru>
+ * @version 1.0.0
+ */
 
 .multiselect{
 	cursor: default;

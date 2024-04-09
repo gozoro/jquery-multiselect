@@ -1,5 +1,11 @@
-;
-(function($)
+/**
+ * A jQuery plugin multiselect with checkboxes
+ * @author Gozoro <gozoro@yandex.ru>
+ * @version 1.0.0
+ */
+
+
+;(function($)
 {
 	'use strict';
 
@@ -50,9 +56,8 @@
 				$selectInput.attr('placeholder', $realSelect.attr('placeholder'));
 
 			if($realSelect.is(':disabled'))
-			{
 				$selectInput.prop('disabled', true);
-			}
+
 
 			function reposition()
 			{
@@ -108,13 +113,12 @@
 				return this;
 			}
 
-			$dropdownList.rowToggle = function(variant)
+			$dropdownList.rowToggle = function()
 			{
 				var checkbox = $dropdownList.find('.selected input').first();
 				if (checkbox.length)
-				{
 					checkbox.prop("checked", !checkbox.is(':checked'));
-				}
+
 
 				$selectInput.changeText();
 
@@ -158,19 +162,24 @@
 				var resultRow = $('<div>').addClass('multiselect-item')
 					.append(checkbox)
 					.append(' ' + itemKey)
-					.mousedown(function(event) {
+					.mousedown(function(event)
+					{
 						$dropdownList.rowToggle();
 						event.preventDefault();
 					})
-					.mouseover(function() {
-						if (!mouseLock) {
+					.mouseover(function()
+					{
+						if (!mouseLock)
+						{
 							mouseLock = false;
 							$dropdownList.unselect();
 							$(this).addClass('selected');
 						}
 					})
-					.mousemove(function() {
-						if (mouseLock) {
+					.mousemove(function()
+					{
+						if (mouseLock)
+						{
 							mouseLock = false;
 							$dropdownList.unselect();
 							$(this).addClass('selected');
@@ -187,27 +196,15 @@
 				$selectInput.changeText();
 			});
 
-
-
-
-
-			$selectInput.keydown(function(event) {
-				switch (event.which) {
-					case 38:
-						pressUpArrow(event);
-						return;
-					case 40:
-						pressDownArrow(event);
-						return;
-					case 13:
-						pressEnter(event);
-						return;
-					case 27:  // Esc
-						$dropdownList.hide();
-						return;
-					case 32:
-						pressSpace(event);
-						return;
+			$selectInput.keydown(function(event)
+			{
+				switch (event.which)
+				{
+					case 38: pressUpArrow(event);   return;
+					case 40: pressDownArrow(event); return;
+					case 13: pressEnter(event);     return;
+					case 27: $dropdownList.hide();  return; // Esc
+					case 32: pressSpace(event); 	return;
 				}
 			});
 
@@ -220,7 +217,6 @@
 					$dropdownList.rowToggle().hide();
 				else
 					$dropdownList.show();
-
 			}
 
 			function pressSpace(event)
@@ -265,7 +261,6 @@
 			{
 				if (dropdownListVisible)
 				{
-					event.preventDefault();
 					mouseLock = true;
 					var selectedItem = $dropdownList.find('.selected').first();
 
