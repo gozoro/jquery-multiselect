@@ -1,0 +1,54 @@
+
+
+.multiselect{
+	cursor: default;
+	width: 100%;
+}
+
+.multiselect[readonly]{
+	background-color: white;
+}
+
+.multiselect[disabled]{
+	background-color: #eee !important;
+}
+
+.multiselect-dropdownlist{
+	position:absolute;
+	display: none;
+	border: 1px solid black;
+	background: white;
+	color:black;
+	overflow-y: auto;
+	max-height:300px;
+	z-index:4000;
+}
+
+.multiselect-dropdownlist input{
+	margin-right:10px;
+}
+
+.multiselect-item{
+	cursor: pointer;
+	color: black;
+	padding: 4px;
+}
+
+.multiselect-caret{
+	position: absolute;
+	font-size:9px;
+	right:5px;
+	bottom:12px;
+	top:auto;
+}
+
+.multiselect-caret.arrow {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid gray;
+}
+
+.multiselect-item.selected{
+	background-color: #398ee7;
+	color: white;
+}
