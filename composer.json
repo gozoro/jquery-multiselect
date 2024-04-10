@@ -1,0 +1,14 @@
+{
+	"name": "gozoro/jquery-multiselect",
+	"description": "A jQuery plugin multiselect with checkboxes.",
+	"keywords": ["jQuery","multiselect", "checboxes", "dropdown"],
+	"homepage": "https://github.com/gozoro/jquery-multiselect",
+	"type": "plugin",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Gozoro",
+			"email": "gozoro@yandex.ru"
+		}
+	]
+}
