@@ -21,7 +21,7 @@
 		options = $.extend({
 
 			selectedText: 'Selected:',
-			selectedTextMin: 3,
+			selectedTextMax: 3,
 			caretClass: 'arrow'
 
 		}, options);
@@ -129,7 +129,7 @@
 			{
 				var res = $dropdownList.find('input:checked');
 
-				if(res.length <= options['selectedTextMin'])
+				if(res.length <= options['selectedTextMax'])
 				{
 					var items = [];
 					for(var i=0; i<res.length; i++)
