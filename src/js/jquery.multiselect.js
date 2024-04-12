@@ -4,7 +4,6 @@
  * @version 1.0.0
  */
 
-
 ;(function($)
 {
 	'use strict';
@@ -34,8 +33,10 @@
 			var $realSelect = $(this);
 			var $container = $('<div>').css('position', 'relative');
 			var $selectInput = $('<input type="text" class="multiselect" readonly>')
-			.addClass($realSelect.prop('class'))
-			.prop('id', $realSelect.prop('id'));
+			.change(function(){
+				$selectInput.changeText();
+			});
+
 
 			var $dropdownList = $('<div class="multiselect-dropdownlist">');
 			var selectName = $realSelect.prop('name');
@@ -48,16 +49,21 @@
 				$dropdownList.show();
 			});
 
+
+			$realSelect.each(function()
+			{
+  				$.each(this.attributes, function(i, attrib)
+				{
+					if(attrib.name == 'class')
+						$selectInput.addClass(attrib.value);
+					else if(attrib.name != 'name')
+						$selectInput.attr(attrib.name, attrib.value);
+				});
+			});
+
+
 			$container.append($selectInput).append($caret).append($dropdownList);
-			$realSelect.after($container).removeAttr('name').removeAttr('id').hide();
-
-
-			if($realSelect.attr('placeholder') != '')
-				$selectInput.attr('placeholder', $realSelect.attr('placeholder'));
-
-			if($realSelect.is(':disabled'))
-				$selectInput.prop('disabled', true);
-
+			$realSelect.after($container).remove();
 
 			function reposition()
 			{
@@ -104,7 +110,6 @@
 			{
 				if (!mouseLock)
 					$dropdownList.unselect();
-
 			});
 
 			$dropdownList.unselect = function()
@@ -113,17 +118,30 @@
 				return this;
 			}
 
-			$dropdownList.rowToggle = function()
+			$dropdownList.rowToggle = function(onlySet)
 			{
-				var checkbox = $dropdownList.find('.selected input').first();
-				if (checkbox.length)
-					checkbox.prop("checked", !checkbox.is(':checked'));
+				var $checkbox = $dropdownList.find('.selected input').first();
 
-
-				$selectInput.changeText();
+				if($checkbox.length)
+				{
+					if(onlySet)
+					{
+						if(!$checkbox.is(':checked'))
+						{
+							$checkbox.prop("checked", true);
+							$selectInput.trigger('change');
+						}
+					}
+					else
+					{
+						$checkbox.prop("checked", !$checkbox.is(':checked'));
+						$selectInput.trigger('change');
+					}
+				}
 
 				return this;
 			}
+
 
 			$selectInput.changeText = function()
 			{
@@ -142,14 +160,11 @@
 				{
 					$selectInput.val( options['selectedText'] + ' ' + res.length );
 				}
-
-				$selectInput.trigger('change', {});
 			}
 
 			$dropdownList.addItem = function(itemValue, itemKey, checked)
 			{
-				var checkbox = $('<input>')
-				.attr('type', 'checkbox')
+				var checkbox = $('<input type="checkbox">')
 				.attr('name', selectName)
 				.attr('value', itemValue)
 				.prop('checked', checked)
@@ -159,12 +174,12 @@
 				});
 
 
-				var resultRow = $('<div>').addClass('multiselect-item')
+				var $row = $('<div>').addClass('multiselect-item')
 					.append(checkbox)
-					.append(' ' + itemKey)
+					.append(itemKey)
 					.mousedown(function(event)
 					{
-						$dropdownList.rowToggle();
+						$dropdownList.rowToggle(0);
 						event.preventDefault();
 					})
 					.mouseover(function()
@@ -173,7 +188,7 @@
 						{
 							mouseLock = false;
 							$dropdownList.unselect();
-							$(this).addClass('selected');
+							$row.addClass('selected');
 						}
 					})
 					.mousemove(function()
@@ -182,14 +197,14 @@
 						{
 							mouseLock = false;
 							$dropdownList.unselect();
-							$(this).addClass('selected');
+							$row.addClass('selected');
 						}
 					});
 
-				this.append(resultRow);
+				this.append($row);
 			}
 
-			$realSelect.find('option').each(function(item)
+			$realSelect.find('option').each(function()
 			{
 				var item = $(this);
 				$dropdownList.addItem(item.val(), item.html(), item.is(':selected'));
@@ -203,18 +218,22 @@
 					case 38: pressUpArrow(event);   return;
 					case 40: pressDownArrow(event); return;
 					case 13: pressEnter(event);     return;
-					case 27: $dropdownList.hide();  return; // Esc
+					case 27: pressEsc(event);       return;
 					case 32: pressSpace(event); 	return;
 				}
 			});
 
+			function pressEsc(event)
+			{
+				$dropdownList.hide();
+			}
 
 			function pressEnter(event)
 			{
 				event.preventDefault();
 
 				if(dropdownListVisible)
-					$dropdownList.rowToggle().hide();
+					$dropdownList.rowToggle(1).hide();
 				else
 					$dropdownList.show();
 			}
@@ -222,7 +241,7 @@
 			function pressSpace(event)
 			{
 				event.preventDefault();
-				$dropdownList.rowToggle();
+				$dropdownList.rowToggle(0);
 			}
 
 			function pressUpArrow(event)
@@ -231,18 +250,18 @@
 				{
 					event.preventDefault();
 					mouseLock = true;
-					var selectedItem = $dropdownList.find('.selected').first();
+					var $selectedItem = $dropdownList.find('.selected').first();
 
-					if (selectedItem.length)
+					if ($selectedItem.length)
 					{
 						$dropdownList.unselect();
 
-						var prevItem = selectedItem.prev();
+						var $prevItem = $selectedItem.prev();
 
-						if (prevItem.length)
+						if ($prevItem.length)
 						{
-							var itemTop = prevItem.addClass('selected').position().top;
-							var offset = $dropdownList.position().top - prevItem.innerHeight();
+							var itemTop = $prevItem.addClass('selected').position().top;
+							var offset = $dropdownList.position().top - $prevItem.innerHeight();
 
 							if (itemTop < offset)
 							{
@@ -262,19 +281,19 @@
 				if (dropdownListVisible)
 				{
 					mouseLock = true;
-					var selectedItem = $dropdownList.find('.selected').first();
+					var $selectedItem = $dropdownList.find('.selected').first();
 
-					if (selectedItem.length)
+					if ($selectedItem.length)
 					{
 						$dropdownList.unselect();
 
-						var nextItem = selectedItem.next();
+						var $nextItem = $selectedItem.next();
 
-						if (nextItem.length)
+						if ($nextItem.length)
 						{
 							var panelHeight = $dropdownList.outerHeight();
-							var itemHeight = nextItem.addClass('selected').innerHeight();
-							var itemBottom = nextItem.position().top + itemHeight;
+							var itemHeight = $nextItem.addClass('selected').innerHeight();
+							var itemBottom = $nextItem.position().top + itemHeight;
 
 							if (itemBottom > panelHeight)
 							{
