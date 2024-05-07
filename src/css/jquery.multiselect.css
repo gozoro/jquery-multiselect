@@ -11,6 +11,7 @@
 
 .multiselect[readonly]{
 	background-color: white;
+	cursor: default;
 }
 
 .multiselect[disabled]{
